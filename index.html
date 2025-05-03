@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheatSheets - Technical Reference Library</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Prism.js for syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <!-- Prism.js Themes -->
+    <!-- Default Dark Theme (enabled) -->
+    <link id="prism-dark-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <!-- Light Theme (disabled initially) -->
+    <link id="prism-light-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" disabled>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body> <!-- Body will get 'light-theme' class dynamically -->
     <div class="app-container">
         <!-- Header Section -->
         <header>
@@ -22,9 +25,10 @@
                 <button id="add-cheatsheet-btn" class="btn primary-btn">
                     <i class="fas fa-plus"></i> New Sheet
                 </button>
-                <div class="theme-toggle">
-                    <i class="fas fa-moon"></i>
-                </div>
+                <!-- Updated Theme Toggle Button -->
+                <button id="theme-toggle-btn" class="theme-toggle btn" aria-label="Toggle theme" data-tooltip="Toggle Theme">
+                    <i id="theme-toggle-icon" class="fas fa-moon"></i>
+                </button>
             </nav>
         </header>
 
@@ -33,26 +37,28 @@
             <!-- Sidebar for filters and tags -->
             <aside class="sidebar">
                 <div class="search-container">
-                    <input type="text" id="search-input" placeholder="Search cheat sheets...">
+                    <input type="text" id="search-input" placeholder="Search cheat sheets..." aria-label="Search cheat sheets">
                     <i class="fas fa-search"></i>
                 </div>
-                
+
                 <div class="tags-section">
                     <h3>Tags</h3>
-                    <div class="tags-container" id="all-tags">
+                    <div class="tags-container" id="all-tags" role="listbox" aria-label="Filter by tag">
                         <!-- Tags will be dynamically generated here -->
+                        <p class="no-tags-message">Loading tags...</p>
                     </div>
                 </div>
-                
+
                 <div class="categories-section">
                     <h3>Categories</h3>
-                    <ul id="categories-list">
-                        <li data-category="all" class="active">All Sheets</li>
-                        <li data-category="javascript">JavaScript</li>
-                        <li data-category="python">Python</li>
-                        <li data-category="css">CSS</li>
-                        <li data-category="html">HTML</li>
-                        <li data-category="git">Git</li>
+                    <ul id="categories-list" role="listbox" aria-label="Filter by category">
+                        <li data-category="all" class="active" role="option" aria-selected="true">All Sheets</li>
+                        <li data-category="javascript" role="option" aria-selected="false">JavaScript</li>
+                        <li data-category="python" role="option" aria-selected="false">Python</li>
+                        <li data-category="css" role="option" aria-selected="false">CSS</li>
+                        <li data-category="html" role="option" aria-selected="false">HTML</li>
+                        <li data-category="git" role="option" aria-selected="false">Git</li>
+                        <!-- Add more categories here if needed -->
                     </ul>
                 </div>
             </aside>
@@ -61,48 +67,49 @@
             <section class="cheatsheets-container">
                 <div class="cheatsheets-header">
                     <h2>All Cheat Sheets</h2>
-                    <div class="view-options">
-                        <button class="view-btn active" data-view="grid">
+                    <div class="view-options" role="radiogroup" aria-label="View options">
+                        <button class="view-btn active" data-view="grid" aria-label="Grid View" aria-checked="true" role="radio" data-tooltip="Grid View">
                             <i class="fas fa-th-large"></i>
                         </button>
-                        <button class="view-btn" data-view="list">
+                        <button class="view-btn" data-view="list" aria-label="List View" aria-checked="false" role="radio" data-tooltip="List View">
                             <i class="fas fa-list"></i>
                         </button>
                     </div>
                 </div>
-                
-                <div id="cheatsheets-grid" class="cheatsheets-grid">
+
+                <div id="cheatsheets-grid" class="cheatsheets-grid" aria-live="polite">
                     <!-- Cheat sheets will be dynamically generated here -->
                 </div>
-                
-                <div id="no-results" class="no-results hidden">
+
+                <div id="no-results" class="no-results hidden" aria-live="polite">
                     <i class="fas fa-search"></i>
                     <p>No cheat sheets found. Try adjusting your search or filters.</p>
                 </div>
             </section>
         </main>
-        
+
         <!-- Modal for adding/editing cheat sheets -->
-        <div id="cheatsheet-modal" class="modal">
+        <div id="cheatsheet-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 id="modal-title">Add New Cheat Sheet</h2>
-                    <button class="close-btn">&times;</button>
+                    <button class="close-btn" aria-label="Close modal">×</button>
                 </div>
                 <div class="modal-body">
-                    <form id="cheatsheet-form">
+                    <form id="cheatsheet-form" novalidate>
                         <div class="form-group">
                             <label for="title-input">Title</label>
-                            <input type="text" id="title-input" required>
+                            <input type="text" id="title-input" required aria-required="true">
                         </div>
                         <div class="form-group">
                             <label for="category-select">Category</label>
-                            <select id="category-select" required>
+                            <select id="category-select" required aria-required="true">
                                 <option value="javascript">JavaScript</option>
                                 <option value="python">Python</option>
                                 <option value="css">CSS</option>
                                 <option value="html">HTML</option>
                                 <option value="git">Git</option>
+                                <option value="other">Other</option> <!-- Added an 'Other' category -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -110,8 +117,8 @@
                             <input type="text" id="tags-input" placeholder="e.g. basics, functions, array">
                         </div>
                         <div class="form-group">
-                            <label for="code-input">Content (supports markdown and code)</label>
-                            <textarea id="code-input" rows="10" required></textarea>
+                            <label for="code-input">Content (supports Markdown)</label>
+                            <textarea id="code-input" rows="10" required aria-required="true" placeholder="Enter your cheat sheet content here. Use Markdown for formatting and code blocks (e.g., ```js ... ```)."></textarea>
                         </div>
                         <div class="form-actions">
                             <button type="button" id="cancel-btn" class="btn">Cancel</button>
@@ -121,13 +128,13 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Cheat Sheet View Modal -->
-        <div id="view-modal" class="modal">
+        <div id="view-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="view-title">
             <div class="modal-content large">
                 <div class="modal-header">
                     <h2 id="view-title">Cheat Sheet</h2>
-                    <button class="close-btn">&times;</button>
+                    <button class="close-btn" aria-label="Close modal">×</button>
                 </div>
                 <div class="modal-body">
                     <div class="view-meta">
@@ -143,18 +150,18 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" id="view-edit-btn">
+                    <button class="btn" id="view-edit-btn" aria-label="Edit this cheat sheet">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="btn danger-btn" id="view-delete-btn">
+                    <button class="btn danger-btn" id="view-delete-btn" aria-label="Delete this cheat sheet">
                         <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
             </div>
         </div>
-        
+
         <!-- Toast notification -->
-        <div id="toast" class="toast">
+        <div id="toast" class="toast" role="alert" aria-live="assertive">
             <div class="toast-content">
                 <i id="toast-icon" class="fas fa-check-circle"></i>
                 <div class="toast-message" id="toast-message">Action completed successfully!</div>
@@ -164,13 +171,15 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <!-- Marked.js for Markdown parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+    <!-- Prism.js Core & Common Languages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <!-- Configure Autoloader (optional, but good practice) -->
+    <script>Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';</script>
+
+    <!-- Your Application Script -->
     <script src="script.js"></script>
 </body>
 </html>
