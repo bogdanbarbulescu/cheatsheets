@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevCheatSheets - Technical Reference Library</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Prism.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <h1>DevCheatSheets</h1>
+            </div>
+            <nav>
+                <button id="add-cheatsheet-btn" class="btn primary-btn">
+                    <i class="fas fa-plus"></i> New Sheet
+                </button>
+                <div class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Content Section -->
+        <main>
+            <!-- Sidebar for filters and tags -->
+            <aside class="sidebar">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search cheat sheets...">
+                    <i class="fas fa-search"></i>
+                </div>
+                
+                <div class="tags-section">
+                    <h3>Tags</h3>
+                    <div class="tags-container" id="all-tags">
+                        <!-- Tags will be dynamically generated here -->
+                    </div>
+                </div>
+                
+                <div class="categories-section">
+                    <h3>Categories</h3>
+                    <ul id="categories-list">
+                        <li data-category="all" class="active">All Sheets</li>
+                        <li data-category="javascript">JavaScript</li>
+                        <li data-category="python">Python</li>
+                        <li data-category="css">CSS</li>
+                        <li data-category="html">HTML</li>
+                        <li data-category="git">Git</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Cheat sheets container -->
+            <section class="cheatsheets-container">
+                <div class="cheatsheets-header">
+                    <h2>All Cheat Sheets</h2>
+                    <div class="view-options">
+                        <button class="view-btn active" data-view="grid">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button class="view-btn" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="cheatsheets-grid" class="cheatsheets-grid">
+                    <!-- Cheat sheets will be dynamically generated here -->
+                </div>
+                
+                <div id="no-results" class="no-results hidden">
+                    <i class="fas fa-search"></i>
+                    <p>No cheat sheets found. Try adjusting your search or filters.</p>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Modal for adding/editing cheat sheets -->
+        <div id="cheatsheet-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">Add New Cheat Sheet</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="cheatsheet-form">
+                        <div class="form-group">
+                            <label for="title-input">Title</label>
+                            <input type="text" id="title-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category-select">Category</label>
+                            <select id="category-select" required>
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="css">CSS</option>
+                                <option value="html">HTML</option>
+                                <option value="git">Git</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tags-input">Tags (comma separated)</label>
+                            <input type="text" id="tags-input" placeholder="e.g. basics, functions, array">
+                        </div>
+                        <div class="form-group">
+                            <label for="code-input">Content (supports markdown and code)</label>
+                            <textarea id="code-input" rows="10" required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="cancel-btn" class="btn">Cancel</button>
+                            <button type="submit" class="btn primary-btn">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cheat Sheet View Modal -->
+        <div id="view-modal" class="modal">
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <h2 id="view-title">Cheat Sheet</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="view-meta">
+                        <div class="view-category" id="view-category">
+                            <i class="fas fa-folder"></i> <span>Category</span>
+                        </div>
+                        <div class="view-tags" id="view-tags">
+                            <!-- Tags will be generated here -->
+                        </div>
+                    </div>
+                    <div class="view-content" id="view-content">
+                        <!-- Content will be rendered here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" id="view-edit-btn">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn danger-btn" id="view-delete-btn">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast notification -->
+        <div id="toast" class="toast">
+            <div class="toast-content">
+                <i id="toast-icon" class="fas fa-check-circle"></i>
+                <div class="toast-message" id="toast-message">Action completed successfully!</div>
+            </div>
+            <div class="toast-progress"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
